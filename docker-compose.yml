@@ -1,0 +1,39 @@
+services:
+  tennis-db:
+    image: postgres:16
+    container_name: tennis_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tennis
+      POSTGRES_USER: tennis_user
+      POSTGRES_PASSWORD: tennis_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tennis_user -d tennis"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tennis-be:
+    container_name: tennis_be
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      tennis-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://tennis_user:tennis_pass@tennis-db:5432/tennis
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
