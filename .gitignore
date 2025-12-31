@@ -1,0 +1,58 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+.env
+.env.*
+.venv/
+venv/
+pip-wheel-metadata/
+
+# =========================
+# FastAPI / Uvicorn
+# =========================
+*.log
+
+# =========================
+# Machine Learning artifacts
+# =========================
+data/ml/*.parquet
+data/ml/*.joblib
+data/ml/*.pkl
+data/ml/*.csv
+
+# =========================
+# Raw & processed data
+# =========================
+data/raw/
+data/postgres/
+data/processed/
+
+# =========================
+# Docker
+# =========================
+*.tar
+docker-compose.override.yml
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.iml
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Git
+# =========================
+.gitignore~

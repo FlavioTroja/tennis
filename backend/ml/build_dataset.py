@@ -74,6 +74,7 @@ def build_dataset():
     FROM matches
     WHERE winner_rank IS NOT NULL
       AND loser_rank IS NOT NULL
+      AND match_date >= DATE '2021-01-01'
     ORDER BY match_date;
     """
 
