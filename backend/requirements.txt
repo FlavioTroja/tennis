@@ -9,3 +9,5 @@ tqdm
 pyarrow
 scikit-learn
 joblib
+requests
+apscheduler

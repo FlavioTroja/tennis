@@ -3,9 +3,9 @@ from pydantic import BaseModel
 import pandas as pd
 import joblib
 
-from app.services.feature_service import (
-    get_player_id,
-    get_surface_state,
+from ml.feature_pipeline import (
+    compute_features_row,
+    FEATURE_COLUMNS,
 )
 
 MODEL_PATH = "/data/ml/tennis_model.joblib"
@@ -23,29 +23,23 @@ class PredictRequest(BaseModel):
 @router.post("/predict")
 def predict(req: PredictRequest):
     try:
-        A = get_player_id(req.player_a)
-        B = get_player_id(req.player_b)
-        surface = req.surface
-
-        elo_A, _ = get_surface_state(A, surface)
-        elo_B, _ = get_surface_state(B, surface)
-
-        elo_diff = elo_A - elo_B
-
-        # ⚠️ DataFrame con feature name (niente warning sklearn)
-        X = pd.DataFrame(
-            [{"elo_diff": elo_diff}]
+        features = compute_features_row(
+            req.player_a,
+            req.player_b,
+            req.surface,
         )
+
+        X = pd.DataFrame([features], columns=FEATURE_COLUMNS)
 
         prob = model.predict_proba(X)[0]
 
         return {
             "player_a": req.player_a,
             "player_b": req.player_b,
-            "surface": surface,
+            "surface": req.surface,
             "player_a_win_probability": round(float(prob[1]), 3),
             "player_b_win_probability": round(float(prob[0]), 3),
-            "elo_diff": round(elo_diff, 2),
+            "features": {k: round(v, 3) for k, v in features.items()},
         }
 
     except ValueError as e:
