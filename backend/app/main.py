@@ -5,7 +5,7 @@ from app.models.base import Base
 from app.models.player import Player
 from app.models.match import Match
 
-from app.predict import router as predict_router
+from app.routes.predict import router as predict_router
 
 app = FastAPI(title="Tennis Prediction Backend")
 

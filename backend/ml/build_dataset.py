@@ -3,6 +3,7 @@ from sqlalchemy import text
 from app.database import engine
 
 OUTPUT_PATH = "/data/ml/tennis_dataset.parquet"
+BASE_ELO = 1500.0
 
 
 # ---------- QUERY FEATURE SQL ----------
@@ -35,16 +36,23 @@ WHERE player_id = :a
   AND match_date < :date;
 """
 
+ELO_SQL = """
+SELECT elo
+FROM player_elo
+WHERE player_id = :pid
+  AND surface = :surface
+  AND match_date < :date
+ORDER BY match_date DESC
+LIMIT 1;
+"""
+
 
 # ---------- FEATURE FUNCTIONS ----------
 
 def scalar(query, params):
     with engine.connect() as conn:
         value = conn.execute(text(query), params).scalar()
-        if value is None:
-            return 0.0
-        return float(value)
-
+        return float(value) if value is not None else 0.0
 
 
 def recent_winrate(pid, date, n):
@@ -57,6 +65,15 @@ def surface_winrate(pid, surface, date):
 
 def h2h_wins(a, b, date):
     return scalar(H2H_SQL, {"a": a, "b": b, "date": date})
+
+
+def elo_pre_match(pid, surface, date):
+    with engine.connect() as conn:
+        v = conn.execute(
+            text(ELO_SQL),
+            {"pid": pid, "surface": surface, "date": date}
+        ).scalar()
+        return float(v) if v is not None else BASE_ELO
 
 
 # ---------- DATASET BUILDER ----------
@@ -74,6 +91,7 @@ def build_dataset():
     FROM matches
     WHERE winner_rank IS NOT NULL
       AND loser_rank IS NOT NULL
+      AND surface IN ('Hard', 'Clay', 'Grass')
     ORDER BY match_date;
     """
 
@@ -87,6 +105,10 @@ def build_dataset():
 
         A = m.winner_id
         B = m.loser_id
+
+        # Elo PRE-MATCH
+        elo_A = elo_pre_match(A, surface, date)
+        elo_B = elo_pre_match(B, surface, date)
 
         # Feature giocatore A
         A_r5 = recent_winrate(A, date, 5)
@@ -102,6 +124,7 @@ def build_dataset():
 
         # Riga 1: A vince
         rows.append({
+            "elo_diff": round(elo_A - elo_B, 2),
             "ranking_diff": m.winner_rank - m.loser_rank,
             "recent_5_diff": A_r5 - B_r5,
             "recent_10_diff": A_r10 - B_r10,
@@ -113,6 +136,7 @@ def build_dataset():
 
         # Riga 2: B perde (simmetrica)
         rows.append({
+            "elo_diff": round(elo_B - elo_A, 2),
             "ranking_diff": m.loser_rank - m.winner_rank,
             "recent_5_diff": B_r5 - A_r5,
             "recent_10_diff": B_r10 - A_r10,
@@ -124,6 +148,7 @@ def build_dataset():
 
     dataset = pd.DataFrame(rows)
     dataset.to_parquet(OUTPUT_PATH, index=False)
+
     print(f"✅ Dataset ML salvato in {OUTPUT_PATH}")
     print(dataset.head())
 
