@@ -8,7 +8,7 @@ from ml.feature_pipeline import (
     FEATURE_COLUMNS,
 )
 
-MODEL_PATH = "/data/ml/tennis_model.joblib"
+MODEL_PATH = "/data/ml/tennis_model_calibrated.joblib"
 
 router = APIRouter()
 model = joblib.load(MODEL_PATH)

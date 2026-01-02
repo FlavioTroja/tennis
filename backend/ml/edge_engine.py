@@ -2,7 +2,6 @@ import pandas as pd
 
 EDGE_THRESHOLD = 0.03   # 3% minimo
 
-
 def implied_prob(decimal_odds: float) -> float:
     return 1.0 / decimal_odds
 
