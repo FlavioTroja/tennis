@@ -1,0 +1,130 @@
+import pandas as pd
+import numpy as np
+import joblib
+
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, log_loss, brier_score_loss
+
+DATASET_PATH = "/data/ml/tennis_dataset.parquet"
+
+EDGE_THRESHOLD = 0.03
+BOOK_MARGIN = 0.05
+
+
+CONFIGS = {
+    "M0_full": [
+        "elo_diff",
+        "ranking_diff",
+        "recent_5_diff",
+        "recent_10_diff",
+        "surface_diff",
+        "h2h_diff",
+    ],
+    "M1_no_ranking": [
+        "elo_diff",
+        "recent_5_diff",
+        "recent_10_diff",
+        "surface_diff",
+        "h2h_diff",
+    ],
+    "M2_elo_form": [
+        "elo_diff",
+        "recent_5_diff",
+        "recent_10_diff",
+    ],
+    "M3_elo_only": [
+        "elo_diff",
+    ],
+}
+
+
+def temporal_split(df):
+    train = df[df.match_date <= "2021-12-31"]
+    test = df[df.match_date > "2022-12-31"]
+    return train, test
+
+
+def run_backtest(df, features):
+    train_df, test_df = temporal_split(df)
+
+    X_train = train_df[features]
+    y_train = train_df["target"]
+
+    X_test = test_df[features]
+    y_test = test_df["target"]
+
+    model = Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", LogisticRegression(max_iter=1000))
+    ])
+
+    model.fit(X_train, y_train)
+
+    probs = model.predict_proba(X_test)[:, 1]
+
+    # ----- Metriche ML -----
+    roc = roc_auc_score(y_test, probs)
+    ll = log_loss(y_test, probs)
+    brier = brier_score_loss(y_test, probs)
+
+    # ----- Betting simulation -----
+    test_df = test_df.copy()
+    test_df["prob"] = probs
+
+    test_df["book_odds"] = 1 / (test_df["prob"] * (1 - BOOK_MARGIN))
+    test_df["edge"] = test_df["prob"] - (1 / test_df["book_odds"])
+
+    bets = test_df[test_df["edge"] > EDGE_THRESHOLD].copy()
+
+    if bets.empty:
+        return roc, ll, brier, 0, 0.0, 0.0
+
+    bets["roi"] = np.where(
+        bets["target"] == 1,
+        bets["book_odds"] - 1,
+        -1
+    )
+
+    return (
+        roc,
+        ll,
+        brier,
+        len(bets),
+        bets["roi"].mean(),
+        bets["roi"].sum()
+    )
+
+
+def main():
+    df = pd.read_parquet(DATASET_PATH)
+    df["match_date"] = pd.to_datetime(df["match_date"])
+
+    results = []
+
+    for name, features in CONFIGS.items():
+        roc, ll, brier, n_bets, avg_roi, tot_roi = run_backtest(df, features)
+
+        results.append({
+            "model": name,
+            "features": ",".join(features),
+            "roc_auc": round(roc, 3),
+            "logloss": round(ll, 3),
+            "brier": round(brier, 3),
+            "bets": n_bets,
+            "avg_roi": round(avg_roi, 3),
+            "total_roi": round(tot_roi, 2),
+        })
+
+    res_df = pd.DataFrame(results).sort_values(
+        by=["avg_roi", "total_roi"],
+        ascending=False
+    )
+
+    print("\n📊 ABLATION STUDY RESULTS\n")
+    print(res_df.to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()
