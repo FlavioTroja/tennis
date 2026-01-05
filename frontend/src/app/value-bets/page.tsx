@@ -1,22 +1,18 @@
-import ValueBetCard from "@/components/ValueBetCard";
+import ValueBetTable from "@/components/ValueBetTable";
 import { fetchValueBets } from "@/lib/api";
 
 export default async function ValueBetsPage() {
-  const bets = await fetchValueBets();
+  const valueBets = await fetchValueBets();
 
   return (
-    <main className="max-w-4xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold">🎾 Value Bets</h1>
+    <main className="p-8">
+      <h1 className="text-2xl font-bold mb-6">🎾 Value Bets</h1>
 
-      {bets.length === 0 && (
+      {valueBets.length === 0 ? (
         <p className="text-gray-500">Nessuna value bet disponibile</p>
+      ) : (
+        <ValueBetTable bets={valueBets} />
       )}
-
-      <div className="grid gap-4 md:grid-cols-2">
-        {bets.map((bet: any) => (
-          <ValueBetCard key={bet.match_id} bet={bet} />
-        ))}
-      </div>
     </main>
   );
 }

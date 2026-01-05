@@ -1,5 +1,6 @@
+import { PredictRequest, PredictResponse } from "@/types/predict";
+import { ValueBet } from "@/types/value-bet";
 import { API_BASE_URL } from "./config";
-import { PredictRequest, PredictResponse, ValueBet } from "./types";
 
 export async function predictMatch(
   payload: PredictRequest

@@ -2,8 +2,14 @@ import pandas as pd
 from sqlalchemy import text
 from app.database import engine
 
+DEFAULT_ELO = 1500.0
+
 
 def get_latest_surface_elo(player_id: int, surface: str, date) -> float:
+    """
+    Ritorna l'ultimo Elo per giocatore+superficie.
+    Se la tabella non esiste o non ci sono record → DEFAULT_ELO.
+    """
     q = text("""
         SELECT elo
         FROM player_elo_surface
@@ -13,13 +19,25 @@ def get_latest_surface_elo(player_id: int, surface: str, date) -> float:
         ORDER BY match_date DESC
         LIMIT 1
     """)
-    with engine.connect() as conn:
-        r = conn.execute(q, {
-            "pid": player_id,
-            "surface": surface,
-            "date": date
-        }).scalar()
-    return r if r is not None else 1500.0
+
+    try:
+        with engine.begin() as conn:
+            r = conn.execute(
+                q,
+                {
+                    "pid": player_id,
+                    "surface": surface,
+                    "date": date,
+                }
+            ).scalar()
+
+        return float(r) if r is not None else DEFAULT_ELO
+
+    except Exception:
+        # 🔥 fallback fondamentale:
+        # - tabella non ancora creata
+        # - bootstrap / mock mode
+        return DEFAULT_ELO
 
 
 def build_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -35,10 +53,14 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
 
     for _, r in df.iterrows():
         elo_a = get_latest_surface_elo(
-            r.player_a_id, r.surface, r.commence_time
+            r.player_a_id,
+            r.surface,
+            r.commence_time
         )
         elo_b = get_latest_surface_elo(
-            r.player_b_id, r.surface, r.commence_time
+            r.player_b_id,
+            r.surface,
+            r.commence_time
         )
 
         rows.append({
