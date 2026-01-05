@@ -7,6 +7,7 @@ from app.models.match import Match
 
 from app.services.scheduler import start_scheduler
 from app.routes.predict import router as predict_router
+from app.routes.value_bets import router as value_bets_router
 
 app = FastAPI(title="Tennis Prediction Backend")
 
@@ -23,3 +24,4 @@ def health():
     return {"status": "ok"}
 
 app.include_router(predict_router)
+app.include_router(value_bets_router)
