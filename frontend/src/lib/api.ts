@@ -22,13 +22,7 @@ export async function predictMatch(
 }
 
 export async function fetchValueBets(): Promise<ValueBet[]> {
-  const res = await fetch(`${API_BASE_URL}/value-bets`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch value bets");
-  }
-
+  const res = await fetch(`/api/value-bets`, { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to fetch value bets");
   return res.json();
 }

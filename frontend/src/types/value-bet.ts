@@ -10,4 +10,8 @@ export interface ValueBet {
   edge_a: number;
   edge_b: number;
   bet_side: "A" | "B";
+
+  // UI only
+  _isNew?: boolean;
+  _edgeChanged?: boolean;
 }
