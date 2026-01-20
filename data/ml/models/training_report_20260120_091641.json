@@ -1,0 +1,80 @@
+{
+  "timestamp": "20260120_091641",
+  "best_model": "gradient_boosting",
+  "features": [
+    "elo_diff",
+    "ranking_diff",
+    "recent_5_diff",
+    "recent_10_diff",
+    "surface_diff",
+    "h2h_diff"
+  ],
+  "train_end": "2021-12-31",
+  "val_end": "2022-12-31",
+  "test_metrics": {
+    "roc_auc": 0.7046588849339253,
+    "log_loss": 0.6261326528369413,
+    "brier_score": 0.21862568421559117,
+    "accuracy": 0.6438413014608234
+  },
+  "betting_simulation": {
+    "n_bets": 4234,
+    "avg_roi": -0.0005296250091723927,
+    "total_roi": -2.2424322888359107,
+    "hit_rate": 0.6915446386395843
+  },
+  "all_models_comparison": [
+    {
+      "model": "gradient_boosting",
+      "val_auc": 0.7273373174805783,
+      "val_logloss": 0.6065859926687042,
+      "test_auc": 0.7044889416437834,
+      "test_logloss": 0.6254497211601746,
+      "test_brier": 0.21835388246634901,
+      "test_accuracy": 0.6436752988047809,
+      "bet_n_bets": 4055,
+      "bet_avg_roi": 0.0062666449784653765,
+      "bet_total_roi": 25.411245387677102,
+      "bet_hit_rate": 0.694944512946979
+    },
+    {
+      "model": "random_forest",
+      "val_auc": 0.7246451328722233,
+      "val_logloss": 0.609670742094708,
+      "test_auc": 0.7020620759547027,
+      "test_logloss": 0.6273716883599457,
+      "test_brier": 0.21907600473355685,
+      "test_accuracy": 0.6430942895086321,
+      "bet_n_bets": 4009,
+      "bet_avg_roi": 0.01772687432962479,
+      "bet_total_roi": 71.06703918746578,
+      "bet_hit_rate": 0.6971813419805438
+    },
+    {
+      "model": "logistic_regression_l1",
+      "val_auc": 0.7218857244465171,
+      "val_logloss": 0.6102297815153501,
+      "test_auc": 0.7010323441735493,
+      "test_logloss": 0.6276944261739223,
+      "test_brier": 0.21937345324712357,
+      "test_accuracy": 0.6441733067729084,
+      "bet_n_bets": 3982,
+      "bet_avg_roi": 0.004077529371473613,
+      "bet_total_roi": 16.236721957207926,
+      "bet_hit_rate": 0.6953792064289301
+    },
+    {
+      "model": "logistic_regression",
+      "val_auc": 0.7218735019342712,
+      "val_logloss": 0.6102285079910614,
+      "test_auc": 0.7010244629053507,
+      "test_logloss": 0.6276998396766742,
+      "test_brier": 0.21937642528099396,
+      "test_accuracy": 0.6445053120849934,
+      "bet_n_bets": 3980,
+      "bet_avg_roi": 0.005055594087673577,
+      "bet_total_roi": 20.121264468940836,
+      "bet_hit_rate": 0.6959798994974874
+    }
+  ]
+}

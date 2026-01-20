@@ -1,4 +1,6 @@
 # ml/run_odds_pipeline.py
+import json
+from pathlib import Path
 import joblib
 from ml.edge_engine import evaluate_matches
 from ml.feature_builder import build_features
@@ -6,10 +8,18 @@ from ml.mock_odds import ingest_mock
 from sqlalchemy import text
 from app.database import engine
 
-MODEL_PATH = "/data/ml/tennis_model_calibrated.joblib"
-FEATURES = ["elo_diff"]
-MODEL_NAME = "elo"
-MODEL_VERSION = "v1_calibrated"
+MODEL_PATH = Path("/data/ml/models/tennis_model_calibrated.joblib")
+FEATURES_PATH = Path("/data/ml/models/feature_columns.json")
+
+# Carica feature list (o usa default)
+if FEATURES_PATH.exists():
+    with open(FEATURES_PATH) as f:
+        FEATURES = json.load(f)
+else:
+    FEATURES = ["elo_diff", "ranking_diff", "recent_5_diff", "recent_10_diff", "surface_diff", "h2h_diff"]
+
+MODEL_NAME = "tennis_ml"
+MODEL_VERSION = "v2_calibrated"
 
 model = joblib.load(MODEL_PATH)
 

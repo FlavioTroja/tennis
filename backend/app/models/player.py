@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Date
 from .base import Base
+
 
 class Player(Base):
     __tablename__ = "players"
@@ -9,7 +10,7 @@ class Player(Base):
     hand = Column(String(1))          # R / L / U
     height = Column(Integer)          # cm
     country = Column(String(3))       # ISO code
+    birth_date = Column(Date)         # Data di nascita
 
     def __repr__(self):
         return f"<Player(id={self.id}, name='{self.name}')>"
-

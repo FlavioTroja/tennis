@@ -1,0 +1,88 @@
+{
+  "timestamp": "20260120_084540",
+  "model_path": "/data/ml/models/tennis_model_calibrated.joblib",
+  "features": [
+    "elo_diff",
+    "ranking_diff",
+    "recent_5_diff",
+    "recent_10_diff",
+    "surface_diff",
+    "h2h_diff"
+  ],
+  "test_set_size": 12048,
+  "metrics": {
+    "roc_auc": 0.7046588849339253,
+    "log_loss": 0.6261326528369413,
+    "brier_score": 0.21862568421559117,
+    "accuracy": 0.6438413014608234
+  },
+  "ece": 0.02657268542861549,
+  "betting_simulation": [
+    {
+      "threshold": 0.01,
+      "n_bets": 0,
+      "hit_rate": 0,
+      "avg_odds": 0,
+      "avg_edge": 0,
+      "roi_flat": 0,
+      "total_roi_flat": 0,
+      "roi_kelly": 0,
+      "total_roi_kelly": 0
+    },
+    {
+      "threshold": 0.02,
+      "n_bets": 0,
+      "hit_rate": 0,
+      "avg_odds": 0,
+      "avg_edge": 0,
+      "roi_flat": 0,
+      "total_roi_flat": 0,
+      "roi_kelly": 0,
+      "total_roi_kelly": 0
+    },
+    {
+      "threshold": 0.03,
+      "n_bets": 0,
+      "hit_rate": 0,
+      "avg_odds": 0,
+      "avg_edge": 0,
+      "roi_flat": 0,
+      "total_roi_flat": 0,
+      "roi_kelly": 0,
+      "total_roi_kelly": 0
+    },
+    {
+      "threshold": 0.05,
+      "n_bets": 0,
+      "hit_rate": 0,
+      "avg_odds": 0,
+      "avg_edge": 0,
+      "roi_flat": 0,
+      "total_roi_flat": 0,
+      "roi_kelly": 0,
+      "total_roi_kelly": 0
+    },
+    {
+      "threshold": 0.07,
+      "n_bets": 0,
+      "hit_rate": 0,
+      "avg_odds": 0,
+      "avg_edge": 0,
+      "roi_flat": 0,
+      "total_roi_flat": 0,
+      "roi_kelly": 0,
+      "total_roi_kelly": 0
+    },
+    {
+      "threshold": 0.1,
+      "n_bets": 0,
+      "hit_rate": 0,
+      "avg_odds": 0,
+      "avg_edge": 0,
+      "roi_flat": 0,
+      "total_roi_flat": 0,
+      "roi_kelly": 0,
+      "total_roi_kelly": 0
+    }
+  ]
+}

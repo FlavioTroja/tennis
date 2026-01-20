@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - tennis_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U tennis_user -d tennis"]
       interval: 10s
@@ -27,7 +27,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+psycopg2://tennis_user:tennis_pass@tennis-db:5432/tennis
-      ODDS_API_KEY: b5fc6c03c920524823eb96750988127f
+      ODDS_API_KEY: ${ODDS_API_KEY:-your_api_key_here}
     ports:
       - "8000:8000"
     volumes:
@@ -38,3 +38,7 @@ services:
       --host 0.0.0.0
       --port 8000
       --reload
+
+volumes:
+  tennis_postgres_data:
+    name: tennis_postgres_data
