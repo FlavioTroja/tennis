@@ -27,7 +27,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+psycopg2://tennis_user:tennis_pass@tennis-db:5432/tennis
-      ODDS_API_KEY: ${ODDS_API_KEY:-your_api_key_here}
+      ODDS_API_KEY: ${ODDS_API_KEY}
     ports:
       - "8000:8000"
     volumes:

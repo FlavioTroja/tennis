@@ -1,6 +1,5 @@
 import logging
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine
 from app.models.base import Base
@@ -26,22 +25,6 @@ logger = logging.getLogger("tennis-backend")
 # FASTAPI APP
 # --------------------------------------------------
 app = FastAPI(title="Tennis Prediction Backend")
-
-# --------------------------------------------------
-# CORS MIDDLEWARE
-# --------------------------------------------------
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        # Aggiungi altri domini se necessario
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # --------------------------------------------------
 # STARTUP EVENTS
