@@ -465,10 +465,22 @@ def build_feature_store():
             m.winner_id, m.loser_id, 
             m.winner_rank, m.loser_rank,
             m.winner_age, m.loser_age,
-            m.w_ace, m.w_df, m.w_svpt, m.w_1stIn, m.w_1stWon, m.w_2ndWon,
-            m.w_bpFaced, m.w_bpSaved,
-            m.l_ace, m.l_df, m.l_svpt, m.l_1stIn, m.l_1stWon, m.l_2ndWon,
-            m.l_bpFaced, m.l_bpSaved
+            COALESCE(m.w_ace, 0) as w_ace, 
+            COALESCE(m.w_df, 0) as w_df, 
+            COALESCE(m.w_svpt, 0) as w_svpt, 
+            COALESCE(m.w_1stIn, 0) as w_1stIn, 
+            COALESCE(m.w_1stWon, 0) as w_1stWon, 
+            COALESCE(m.w_2ndWon, 0) as w_2ndWon,
+            COALESCE(m.w_bpFaced, 0) as w_bpFaced, 
+            COALESCE(m.w_bpSaved, 0) as w_bpSaved,
+            COALESCE(m.l_ace, 0) as l_ace, 
+            COALESCE(m.l_df, 0) as l_df, 
+            COALESCE(m.l_svpt, 0) as l_svpt, 
+            COALESCE(m.l_1stIn, 0) as l_1stIn, 
+            COALESCE(m.l_1stWon, 0) as l_1stWon, 
+            COALESCE(m.l_2ndWon, 0) as l_2ndWon,
+            COALESCE(m.l_bpFaced, 0) as l_bpFaced, 
+            COALESCE(m.l_bpSaved, 0) as l_bpSaved
         FROM matches m
         WHERE m.surface IN ('Hard', 'Clay', 'Grass')
           AND (m.match_date > :d OR (m.match_date = :d AND m.id > :id))
@@ -606,29 +618,29 @@ def build_feature_store():
             recent_matches[A] = [d for d in recent_matches[A] if d > cutoff]
             recent_matches[B] = [d for d in recent_matches[B] if d > cutoff]
 
-            # Serve stats update (if available)
-            if m.w_svpt:
+            # Serve stats update (if available - check svpt > 0)
+            if m.w_svpt > 0:
                 ss = serve_stats[A]
-                ss["ace"] += m.w_ace or 0
-                ss["df"] += m.w_df or 0
-                ss["svpt"] += m.w_svpt or 0
-                ss["1stIn"] += m.w_1stIn or 0
-                ss["1stWon"] += m.w_1stWon or 0
-                ss["2ndWon"] += m.w_2ndWon or 0
-                ss["bpFaced"] += m.w_bpFaced or 0
-                ss["bpSaved"] += m.w_bpSaved or 0
+                ss["ace"] += m.w_ace
+                ss["df"] += m.w_df
+                ss["svpt"] += m.w_svpt
+                ss["1stIn"] += m.w_1stIn
+                ss["1stWon"] += m.w_1stWon
+                ss["2ndWon"] += m.w_2ndWon
+                ss["bpFaced"] += m.w_bpFaced
+                ss["bpSaved"] += m.w_bpSaved
                 serve_dirty[A] = ss
                 
-            if m.l_svpt:
+            if m.l_svpt > 0:
                 ss = serve_stats[B]
-                ss["ace"] += m.l_ace or 0
-                ss["df"] += m.l_df or 0
-                ss["svpt"] += m.l_svpt or 0
-                ss["1stIn"] += m.l_1stIn or 0
-                ss["1stWon"] += m.l_1stWon or 0
-                ss["2ndWon"] += m.l_2ndWon or 0
-                ss["bpFaced"] += m.l_bpFaced or 0
-                ss["bpSaved"] += m.l_bpSaved or 0
+                ss["ace"] += m.l_ace
+                ss["df"] += m.l_df
+                ss["svpt"] += m.l_svpt
+                ss["1stIn"] += m.l_1stIn
+                ss["1stWon"] += m.l_1stWon
+                ss["2ndWon"] += m.l_2ndWon
+                ss["bpFaced"] += m.l_bpFaced
+                ss["bpSaved"] += m.l_bpSaved
                 serve_dirty[B] = ss
 
             # Level experience update
