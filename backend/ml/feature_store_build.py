@@ -458,7 +458,7 @@ def build_feature_store():
     last_date, last_id = get_resume_cursor()
     print(f"▶ Resume from > ({last_date}, {last_id})")
 
-    # Query match con tutti i nuovi campi
+    # Query match con tutti i nuovi campi (nomi colonne minuscoli per PostgreSQL)
     matches_sql = text("""
         SELECT 
             m.id, m.match_date, m.surface, m.tournament_level,
@@ -468,19 +468,19 @@ def build_feature_store():
             COALESCE(m.w_ace, 0) as w_ace, 
             COALESCE(m.w_df, 0) as w_df, 
             COALESCE(m.w_svpt, 0) as w_svpt, 
-            COALESCE(m.w_1stIn, 0) as w_1stIn, 
-            COALESCE(m.w_1stWon, 0) as w_1stWon, 
-            COALESCE(m.w_2ndWon, 0) as w_2ndWon,
-            COALESCE(m.w_bpFaced, 0) as w_bpFaced, 
-            COALESCE(m.w_bpSaved, 0) as w_bpSaved,
+            COALESCE(m.w_1stin, 0) as w_1stin, 
+            COALESCE(m.w_1stwon, 0) as w_1stwon, 
+            COALESCE(m.w_2ndwon, 0) as w_2ndwon,
+            COALESCE(m.w_bpfaced, 0) as w_bpfaced, 
+            COALESCE(m.w_bpsaved, 0) as w_bpsaved,
             COALESCE(m.l_ace, 0) as l_ace, 
             COALESCE(m.l_df, 0) as l_df, 
             COALESCE(m.l_svpt, 0) as l_svpt, 
-            COALESCE(m.l_1stIn, 0) as l_1stIn, 
-            COALESCE(m.l_1stWon, 0) as l_1stWon, 
-            COALESCE(m.l_2ndWon, 0) as l_2ndWon,
-            COALESCE(m.l_bpFaced, 0) as l_bpFaced, 
-            COALESCE(m.l_bpSaved, 0) as l_bpSaved
+            COALESCE(m.l_1stin, 0) as l_1stin, 
+            COALESCE(m.l_1stwon, 0) as l_1stwon, 
+            COALESCE(m.l_2ndwon, 0) as l_2ndwon,
+            COALESCE(m.l_bpfaced, 0) as l_bpfaced, 
+            COALESCE(m.l_bpsaved, 0) as l_bpsaved
         FROM matches m
         WHERE m.surface IN ('Hard', 'Clay', 'Grass')
           AND (m.match_date > :d OR (m.match_date = :d AND m.id > :id))
@@ -624,11 +624,11 @@ def build_feature_store():
                 ss["ace"] += m.w_ace
                 ss["df"] += m.w_df
                 ss["svpt"] += m.w_svpt
-                ss["1stIn"] += m.w_1stIn
-                ss["1stWon"] += m.w_1stWon
-                ss["2ndWon"] += m.w_2ndWon
-                ss["bpFaced"] += m.w_bpFaced
-                ss["bpSaved"] += m.w_bpSaved
+                ss["1stIn"] += m.w_1stin
+                ss["1stWon"] += m.w_1stwon
+                ss["2ndWon"] += m.w_2ndwon
+                ss["bpFaced"] += m.w_bpfaced
+                ss["bpSaved"] += m.w_bpsaved
                 serve_dirty[A] = ss
                 
             if m.l_svpt > 0:
@@ -636,11 +636,11 @@ def build_feature_store():
                 ss["ace"] += m.l_ace
                 ss["df"] += m.l_df
                 ss["svpt"] += m.l_svpt
-                ss["1stIn"] += m.l_1stIn
-                ss["1stWon"] += m.l_1stWon
-                ss["2ndWon"] += m.l_2ndWon
-                ss["bpFaced"] += m.l_bpFaced
-                ss["bpSaved"] += m.l_bpSaved
+                ss["1stIn"] += m.l_1stin
+                ss["1stWon"] += m.l_1stwon
+                ss["2ndWon"] += m.l_2ndwon
+                ss["bpFaced"] += m.l_bpfaced
+                ss["bpSaved"] += m.l_bpsaved
                 serve_dirty[B] = ss
 
             # Level experience update

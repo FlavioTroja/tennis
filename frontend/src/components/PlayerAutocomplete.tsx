@@ -82,6 +82,7 @@ export default function PlayerAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isUserTypingRef = useRef(false);
 
   const debouncedInput = useDebounce(inputValue, 300);
 
@@ -101,7 +102,10 @@ export default function PlayerAutocomplete({
         if (res.ok) {
           const data = await res.json();
           setSuggestions(data);
-          setIsOpen(data.length > 0);
+          // Only open dropdown if user is actively typing, not after selection
+          if (isUserTypingRef.current) {
+            setIsOpen(data.length > 0);
+          }
         }
       } catch (error) {
         console.error("Error fetching players:", error);
@@ -174,6 +178,7 @@ export default function PlayerAutocomplete({
 
   // Select a player
   const selectPlayer = (player: Player) => {
+    isUserTypingRef.current = false;
     setInputValue(player.name);
     onChange(player.name);
     setIsOpen(false);
@@ -186,7 +191,8 @@ export default function PlayerAutocomplete({
     const newValue = e.target.value;
     setInputValue(newValue);
     setHighlightedIndex(-1);
-    
+    isUserTypingRef.current = true;
+
     // If cleared, also update parent
     if (newValue === "") {
       onChange("");
