@@ -39,6 +39,23 @@ services:
       --port 8000
       --reload
 
+  tennis-fe:
+    container_name: tennis_fe
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - tennis-be
+    environment:
+      API_BASE_URL: http://tennis-be:8000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
 volumes:
   tennis_postgres_data:
     name: tennis_postgres_data
