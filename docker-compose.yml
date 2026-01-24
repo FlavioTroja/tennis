@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+    networks:
+      - http_net  
     volumes:
       - tennis_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -30,6 +32,8 @@ services:
       ODDS_API_KEY: ${ODDS_API_KEY}
     ports:
       - "8000:8000"
+    networks:
+      - http_net  
     volumes:
       - ./backend:/app
       - ./data:/data
@@ -51,6 +55,8 @@ services:
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     ports:
       - "3000:3000"
+    networks:
+      - http_net
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -59,3 +65,8 @@ services:
 volumes:
   tennis_postgres_data:
     name: tennis_postgres_data
+
+networks:
+  http_net:
+    driver: bridge
+    name: http_net 
