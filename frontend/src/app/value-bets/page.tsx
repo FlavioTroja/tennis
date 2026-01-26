@@ -1,11 +1,11 @@
 import ValueBetsLive from "@/components/ValueBetsLive";
 
 async function fetchInitialValueBets() {
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:8000";
+  const baseUrl = process.env.API_BASE_URL;
   try {
-    const res = await fetch(`${baseUrl}/value-bets`, { 
+    const res = await fetch(`${baseUrl}/value-bets`, {
       cache: "no-store",
-      next: { revalidate: 0 }
+      next: { revalidate: 0 },
     });
     if (!res.ok) return [];
     return res.json();
@@ -21,9 +21,7 @@ export default async function ValueBetsPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          💰 Value Bets
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">💰 Value Bets</h1>
         <p className="text-gray-600">
           Opportunità di betting dove il nostro modello rileva un edge positivo
           rispetto alle quote dei bookmaker.
@@ -44,7 +42,9 @@ export default async function ValueBetsPage() {
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="text-sm text-gray-500 mb-1">Value Bets Attive</div>
-          <div className="text-2xl font-bold text-blue-600">{initialBets.length}</div>
+          <div className="text-2xl font-bold text-blue-600">
+            {initialBets.length}
+          </div>
           <div className="text-xs text-gray-500">In questo momento</div>
         </div>
       </div>

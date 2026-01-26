@@ -1,7 +1,7 @@
 // API Configuration
 
 // Backend URL - per chiamate client-side
-export const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8000";
+export const API_BASE_URL = process.env.API_BASE_URL;
 
 // Polling intervals
 export const VALUE_BETS_POLL_INTERVAL = 15000; // 15 seconds
