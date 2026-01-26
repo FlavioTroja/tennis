@@ -1,7 +1,9 @@
 // API Configuration
 
 // Backend URL - per chiamate client-side
-export const API_BASE_URL = process.env.API_BASE_URL;
+// In production, use /api (nginx proxies to backend)
+// In development, can override with NEXT_PUBLIC_API_BASE_URL
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 // Polling intervals
 export const VALUE_BETS_POLL_INTERVAL = 15000; // 15 seconds
