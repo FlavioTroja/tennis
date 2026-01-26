@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - http_net  
+      - http_net
     volumes:
       - tennis_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -33,7 +33,7 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - http_net  
+      - http_net
     volumes:
       - ./backend:/app
       - ./data:/data
@@ -52,7 +52,6 @@ services:
       - tennis-be
     environment:
       API_BASE_URL: http://tennis-be:8000
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     ports:
       - "3000:3000"
     networks:
@@ -69,4 +68,4 @@ volumes:
 networks:
   http_net:
     driver: bridge
-    name: http_net 
+    name: http_net
